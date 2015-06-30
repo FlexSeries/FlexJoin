@@ -101,10 +101,13 @@ public final class PlayerManager extends FlexModule<FlexJoin> implements Listene
         Player player = e.getPlayer();
 
         boolean isFirstJoin = e.getCustomData().containsKey("firstJoin") && (boolean) e.getCustomData().get("firstJoin");
-        if (isFirstJoin && messageFirstJoin != null) {
-            e.setJoinMessage(MessageReference.createPlain(messageFirstJoin.replace("{NAME}", player.getName()).replace("{DISPNAME}", player.getDisplayName())));
-        } else if (messageJoin != null) {
-            e.setJoinMessage(MessageReference.createPlain(messageJoin.replace("{NAME}", player.getName()).replace("{DISPNAME}", player.getDisplayName())));
+
+        if (e.getJoinMessage() != null) {
+            if (isFirstJoin && messageFirstJoin != null) {
+                e.setJoinMessage(MessageReference.createPlain(messageFirstJoin.replace("{NAME}", player.getName()).replace("{DISPNAME}", player.getDisplayName())));
+            } else if (messageJoin != null) {
+                e.setJoinMessage(MessageReference.createPlain(messageJoin.replace("{NAME}", player.getName()).replace("{DISPNAME}", player.getDisplayName())));
+            }
         }
 
         if (!isTitleEnabled) {
@@ -173,7 +176,7 @@ public final class PlayerManager extends FlexModule<FlexJoin> implements Listene
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerLeave(PlayerLeaveEvent e) {
-        if (messageQuit != null) {
+        if (messageQuit != null && e.getLeaveMessage() != null) {
             e.setLeaveMessage(MessageReference.createPlain(messageQuit.replace("{NAME}", e.getPlayer().getName()).replace("{DISPNAME}", e.getPlayer().getDisplayName())));
         }
     }
