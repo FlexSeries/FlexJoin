@@ -24,13 +24,13 @@
  */
 package me.st28.flexseries.flexjoin;
 
-import me.st28.flexseries.flexcore.plugin.FlexPlugin;
 import me.st28.flexseries.flexjoin.backend.PlayerManager;
+import me.st28.flexseries.flexlib.plugin.FlexPlugin;
 
 public final class FlexJoin extends FlexPlugin {
 
     @Override
-    public void handlePluginLoad() {
+    public void handleLoad() {
         registerModule(new PlayerManager(this));
     }
 

@@ -24,14 +24,15 @@
  */
 package me.st28.flexseries.flexjoin.backend;
 
-import me.st28.flexseries.flexcore.FlexCore;
-import me.st28.flexseries.flexcore.events.PlayerJoinLoadedEvent;
-import me.st28.flexseries.flexcore.events.PlayerLeaveEvent;
-import me.st28.flexseries.flexcore.logging.LogHelper;
-import me.st28.flexseries.flexcore.message.MessageReference;
-import me.st28.flexseries.flexcore.plugin.module.FlexModule;
-import me.st28.flexseries.flexcore.util.ScreenTitle;
 import me.st28.flexseries.flexjoin.FlexJoin;
+import me.st28.flexseries.flexlib.FlexLib;
+import me.st28.flexseries.flexlib.log.LogHelper;
+import me.st28.flexseries.flexlib.message.reference.PlainMessageReference;
+import me.st28.flexseries.flexlib.player.PlayerExtendedJoinEvent;
+import me.st28.flexseries.flexlib.player.PlayerExtendedLeaveEvent;
+import me.st28.flexseries.flexlib.plugin.module.FlexModule;
+import me.st28.flexseries.flexlib.plugin.module.ModuleDescriptor;
+import me.st28.flexseries.flexlib.utils.title.ScreenTitle;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
@@ -61,7 +62,7 @@ public final class PlayerManager extends FlexModule<FlexJoin> implements Listene
     private final Map<String, String> titleSecondLine = new HashMap<>();
 
     public PlayerManager(FlexJoin plugin) {
-        super(plugin, "players", "Handles player joining and leaving", false);
+        super(plugin, "players", "Handles player joining and leaving", new ModuleDescriptor().setGlobal(true).setSmartLoad(false));
     }
 
     @Override
@@ -97,16 +98,16 @@ public final class PlayerManager extends FlexModule<FlexJoin> implements Listene
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
-    public void onPlayerJoinLoaded(PlayerJoinLoadedEvent e) {
+    public void onPlayerJoinLoaded(PlayerExtendedJoinEvent e) {
         Player player = e.getPlayer();
 
-        boolean isFirstJoin = e.getCustomData().containsKey("firstJoin") && (boolean) e.getCustomData().get("firstJoin");
+        boolean isFirstJoin = e.getData().getCustomData("firstJoin", Boolean.class, false);
 
         if (e.getJoinMessage() != null) {
             if (isFirstJoin && messageFirstJoin != null) {
-                e.setJoinMessage(MessageReference.createPlain(messageFirstJoin.replace("{NAME}", player.getName()).replace("{DISPNAME}", player.getDisplayName())));
+                e.setJoinMessage(new PlainMessageReference(messageFirstJoin.replace("{NAME}", player.getName()).replace("{DISPNAME}", player.getDisplayName())));
             } else if (messageJoin != null) {
-                e.setJoinMessage(MessageReference.createPlain(messageJoin.replace("{NAME}", player.getName()).replace("{DISPNAME}", player.getDisplayName())));
+                e.setJoinMessage(new PlainMessageReference(messageJoin.replace("{NAME}", player.getName()).replace("{DISPNAME}", player.getDisplayName())));
             }
         }
 
@@ -149,9 +150,9 @@ public final class PlayerManager extends FlexModule<FlexJoin> implements Listene
 
         String serverName = "Minecraft Server";
         try {
-            serverName = JavaPlugin.getPlugin(FlexCore.class).getServerName();
+            serverName = JavaPlugin.getPlugin(FlexLib.class).getServerName();
         } catch (Exception ex) {
-            LogHelper.warning(this, "Unable to retrieve server name from FlexCore.", ex);
+            LogHelper.warning(this, "Unable to retrieve server name from FlexLib.", ex);
         }
 
         title = title.replace("{NAME}", player.getName()).replace("{DISPNAME}", player.getDisplayName()).replace("{SERVER}", serverName);
@@ -175,9 +176,9 @@ public final class PlayerManager extends FlexModule<FlexJoin> implements Listene
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
-    public void onPlayerLeave(PlayerLeaveEvent e) {
+    public void onPlayerLeave(PlayerExtendedLeaveEvent e) {
         if (messageQuit != null && e.getLeaveMessage() != null) {
-            e.setLeaveMessage(MessageReference.createPlain(messageQuit.replace("{NAME}", e.getPlayer().getName()).replace("{DISPNAME}", e.getPlayer().getDisplayName())));
+            e.setLeaveMessage(new PlainMessageReference(messageQuit.replace("{NAME}", e.getPlayer().getName()).replace("{DISPNAME}", e.getPlayer().getDisplayName())));
         }
     }
 
