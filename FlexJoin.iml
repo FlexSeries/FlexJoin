@@ -23,7 +23,6 @@
     <orderEntry type="library" name="Maven: javax.persistence:persistence-api:1.0" level="project" />
     <orderEntry type="library" name="Maven: org.yaml:snakeyaml:1.15" level="project" />
     <orderEntry type="library" name="Maven: net.md-5:bungeecord-chat:1.8-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: org.spigotmc:spigot:1.8.7" level="project" />
     <orderEntry type="library" name="Maven: com.stealthyone.mcb:mcml:2.0.0" level="project" />
   </component>
 </module>
